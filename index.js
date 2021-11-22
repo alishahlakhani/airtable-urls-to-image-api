@@ -1,35 +1,26 @@
-var Airtable = require('airtable');
-const API_KEY = "Insert your key here";
-const BASE_ID = "Insert your base Id"
-const BASE_NAME = "Insert your base name"
-const VIEW_NAME = "Insert your view name"
-const URL_TEXT_COLUMN_NAME = "Insert column name where images are in url format"
-const URL_ATTACHMENT_COLUMN_NAME = "Insert column name where image type is Attachment"
+const configs = require("./configs");
+const Airtable = require('airtable');
 
-var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
+var base = new Airtable({ apiKey: configs.API_KEY }).base(configs.BASE_ID);
 
 let list = [];
-base(BASE_NAME).select({
-    view: VIEW_NAME
+base(configs.BASE_NAME).select({
+    view: configs.VIEW_NAME
 })
     .eachPage((records, fetchNextPage) => {
         records.forEach((record) => {
-            if (record.get(URL_TEXT_COLUMN_NAME) && record.get(URL_TEXT_COLUMN_NAME).length > 0) {
+            if (record.get(configs.URL_TEXT_COLUMN_NAME) && record.get(configs.URL_TEXT_COLUMN_NAME).length > 0) {
                 list.push({
                     id: record.id, fields: {
-                        [URL_ATTACHMENT_COLUMN_NAME]: [
+                        [configs.URL_ATTACHMENT_COLUMN_NAME]: [
                             {
-                                "url": record.get(URL_TEXT_COLUMN_NAME)
+                                "url": record.get(configs.URL_TEXT_COLUMN_NAME)
                             }
                         ]
                     },
                 })
             }
         });
-
-        // To fetch the next page of records, call `fetchNextPage`.
-        // If there are more records, `page` will get called again.
-        // If there are no more records, `done` will get called.
         fetchNextPage();
     }, (err) => {
         if (err) { console.error(err); return; }
@@ -44,14 +35,14 @@ base(BASE_NAME).select({
 
 function updateRecord(start, end, list) {
     return new Promise((res, rej) => {
-        base(VIEW_NAME).update(list, (err, records) => {
+        base(configs.VIEW_NAME).update(list, (err, records) => {
             if (err) {
                 rej(err);
                 return;
             }
 
             records.forEach((record) => {
-                console.log(`[${start} - ${end}] Updated =>`, record.get(URL_TEXT_COLUMN_NAME));
+                console.log(`[${start} - ${end}] Updated =>`, record.get(configs.URL_TEXT_COLUMN_NAME));
             });
 
             res("ok")

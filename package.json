@@ -1,4 +1,11 @@
 {
+  "name": "airtable-urls-to-image-api",
+  "version": "1.0.0",
+  "description": "Airtable url(Text) column to Image(Attachment) column automator",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "airtable": "^0.11.1"
   }
